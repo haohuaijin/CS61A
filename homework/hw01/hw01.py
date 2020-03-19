@@ -38,7 +38,12 @@ def two_of_three(x, y, z):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(two_of_three)).body[0].body]
     ['Expr', 'Return']
     """
-    return min(x, y, z)**2 + ((x if x<=z else z) if x>=y else (y if y<=z else z))**2
+    # my answer
+    # return min(x, y, z)**2 + ((x if x<=z else (y if y>=z else z)) if x>=y else (y if y<=z else (x if x<=z else z)))**2
+    # good answer
+    # return min(x*x+y*y, x*x+z*z, y*y+z*z)
+    return x**2 + y**2 + z**2 - max(x, y, z)**2
+
 
 def largest_factor(x):
     """Return the largest factor of x that is smaller than x.
@@ -51,6 +56,21 @@ def largest_factor(x):
     1
     """
     "*** YOUR CODE HERE ***"
+    # my answer
+    """
+    for i in range(2, int(x/2+1)):
+        if x % i == 0:
+            return int(x / i)
+    return 1
+    """
+    # good answer
+    factor = x - 1
+    while factor > 0:
+        if x % factor == 0:
+            return factor
+        factor -= 1
+
+
 
 def if_function(condition, true_result, false_result):
     """Return true_result if condition is a true value, and
@@ -95,12 +115,15 @@ def with_if_function():
 
 def c():
     "*** YOUR CODE HERE ***"
+    return False
 
 def t():
     "*** YOUR CODE HERE ***"
+    print("5")
 
 def f():
     "*** YOUR CODE HERE ***"
+    print("6")
 
 def hailstone(x):
     """Print the hailstone sequence starting at x and return its
@@ -118,3 +141,13 @@ def hailstone(x):
     7
     """
     "*** YOUR CODE HERE ***"
+    count = 1
+    while x != 1:
+        print(int(x))
+        if x%2 == 0:
+            x = x / 2
+        else:
+            x = 3*x + 1
+        count = count + 1
+    print(int(x))
+    return count
