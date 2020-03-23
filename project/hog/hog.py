@@ -2,6 +2,7 @@
 
 from dice import six_sided, four_sided, make_test_dice
 from ucb import main, trace, interact
+from math import *
 
 GOAL_SCORE = 100  # The goal of Hog is to score 100 points.
 
@@ -22,6 +23,14 @@ def roll_dice(num_rolls, dice=six_sided):
     assert num_rolls > 0, 'Must roll at least once.'
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
+    total = 0
+    flag = False
+    for i in range(num_rolls):
+        num = dice()
+        total += num 
+        if num == 1:
+            flag = True
+    return 1 if flag else total
     # END PROBLEM 1
 
 
@@ -33,6 +42,16 @@ def free_bacon(score):
     assert score < 100, 'The game should be over.'
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    num = score * score * score
+    ret, i = 0, 0
+    while num > 0:
+        if i % 2 == 0:
+            ret += num % 10
+        else:
+            ret -= num % 10
+        num //= 10
+        i = i + 1
+    return abs(ret) + 1
     # END PROBLEM 2
 
 
