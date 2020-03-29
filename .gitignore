@@ -45,6 +45,7 @@
 *.bak
 *.dat
 *.dir
+*.pyc
 
 # Kernel Module Compile Results
 *.mod*
