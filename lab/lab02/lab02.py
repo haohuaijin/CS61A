@@ -72,8 +72,8 @@ def both_paths(sofar="S"):
     print(sofar)
     Left = sofar + "L"
     Right = sofar + "R"
-    def le(sofar=Left):
+    def le():
         return both_paths(Left)
-    def ri(sofar=Right):
+    def ri():
         return both_paths(Right)
     return le, ri

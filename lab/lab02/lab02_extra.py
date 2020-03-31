@@ -36,6 +36,7 @@ def composite_identity(f, g):
     False
     """
     "*** YOUR CODE HERE ***"
+    return lambda x: g(f(x)) == f(g(x))
 
 def cycle(f1, f2, f3):
     """Returns a function that is itself a higher-order function.
@@ -64,3 +65,19 @@ def cycle(f1, f2, f3):
     19
     """
     "*** YOUR CODE HERE ***"
+    def outside(n):
+        def inside(x):
+            i = 0
+            while n > i:
+                if i % 3 == 0:
+                    x = f1(x)
+                elif i % 3 == 1:
+                    x = f2(x)
+                else:
+                    x = f3(x)
+                i += 1
+            return x
+        return inside
+    return outside
+
+
