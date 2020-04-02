@@ -77,3 +77,6 @@ def both_paths(sofar="S"):
     def ri():
         return both_paths(Right)
     return le, ri
+
+
+    
