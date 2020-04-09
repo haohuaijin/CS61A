@@ -26,6 +26,12 @@ def num_sevens(x):
     True
     """
     "*** YOUR CODE HERE ***"
+    if x == 0:
+        return 0
+    elif x % 10 == 7:
+        return num_sevens(x // 10) + 1
+    else:
+        return num_sevens(x // 10)
 
 def pingpong(n):
     """Return the nth element of the ping-pong sequence.
@@ -60,6 +66,22 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    def helper(now, i, flag):
+        if i == n:
+            return now
+        elif i % 7 == 0 or num_sevens(i) > 0:
+            if flag:
+                return helper(now - 1, i + 1, False)
+            else:
+                return helper(now + 1, i + 1, True)
+        else:
+            if flag:
+                return helper(now + 1, i + 1, True)
+            else:
+                return helper(now - 1, i + 1, False)
+    
+    return helper(1, 1, True)
+
 
 def count_change(total):
     """Return the number of ways to make change for total.
@@ -78,6 +100,7 @@ def count_change(total):
     True
     """
     "*** YOUR CODE HERE ***"
+
 
 def missing_digits(n):
     """Given a number a that is in sorted, increasing order,
@@ -99,7 +122,8 @@ def missing_digits(n):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    
+    
 
 ###################
 # Extra Questions #
