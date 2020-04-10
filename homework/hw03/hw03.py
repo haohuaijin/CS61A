@@ -122,7 +122,12 @@ def missing_digits(n):
     True
     """
     "*** YOUR CODE HERE ***"
-    
+    if n < 10:
+        return 0
+    elif n < 100:
+        return n%10-n//10-1 if n//10 != n%10 else 0
+    else: # 注意 A + B if C else D 这种方法会先执行C，最好对作用范围大括号
+        return missing_digits(n // 10) + (n%10-n%100//10-1 if n%100//10 != n%10 else 0)
     
 
 ###################
