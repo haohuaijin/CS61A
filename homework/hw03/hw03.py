@@ -100,6 +100,23 @@ def count_change(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def maxnum(i):
+        if 2 ** i > total:
+            return 2 ** (i-1)
+        else:
+            return maxnum(i + 1)
+    def helper(n, m):
+        if n == 0: # 这里为什么这样
+            return 1
+        elif n < 1: 
+            return 0
+        elif m == 0:
+            return 0
+        else:
+            return helper(n-m, m) + helper(n, m // 2)
+    return helper(total, maxnum(1))
+
+
 
 
 def missing_digits(n):
@@ -167,6 +184,18 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    for i in range(1,4):
+        if i in [start, end]:
+            continue
+        mid = i
+    if n == 1:
+        print_move(start, end)
+        return
+    move_stack(n-1, start, mid)
+    print_move(start, end)
+    move_stack(n-1, mid, end)
+
+
 
 from operator import sub, mul
 
@@ -180,4 +209,4 @@ def make_anonymous_factorial():
     >>> check(HW_SOURCE_FILE, 'make_anonymous_factorial', ['Assign', 'AugAssign', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    return 
