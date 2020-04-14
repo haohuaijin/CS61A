@@ -18,6 +18,10 @@ def skip_add(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n <= 0:
+        return 0
+    else:
+        return n + skip_add(n - 2)
 
 def summation(n, term):
 
@@ -39,6 +43,10 @@ def summation(n, term):
     """
     assert n >= 1
     "*** YOUR CODE HERE ***"
+    if n == 1:
+        return term(1)
+    else:
+        return term(n) + summation(n - 1, term)
 
 def gcd(a, b):
     """Returns the greatest common divisor of a and b.
@@ -54,6 +62,10 @@ def gcd(a, b):
     40
     """
     "*** YOUR CODE HERE ***"
+    if b % a == 0:
+        return a
+    else:
+        return gcd(b, a % b)
 
 def paths(m, n):
     """Return the number of paths from one corner of an
@@ -69,7 +81,16 @@ def paths(m, n):
     1
     """
     "*** YOUR CODE HERE ***"
-
+    def search(i, j):
+        if i == m-1 and j == n-1:
+            return 1
+        right, up = 0, 0
+        if i < m - 1:
+            up = search(i + 1, j)
+        if j < n - 1:
+            right = search(i, j + 1)
+        return up + right
+    return search(0, 0)
 
 def max_subseq(n, l):
     """
@@ -116,3 +137,4 @@ def max_subseq(n, l):
     5
     """
     "*** YOUR CODE HERE ***"
+    
