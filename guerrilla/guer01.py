@@ -2,7 +2,7 @@
 """
 >>> lst = [1,2,3,4,5]
 >>> lst[1:3]
-[1,2]
+[2,3]
 
 >>> lst[0:len(lst)]
 [1,2,3,4,5]
@@ -70,14 +70,13 @@ use list.copy()
 # Q 1.5 
 #??? 有疑问
 """
-1. the base case
-2. the stop case
-3. the recursice condition
+1. Base Case(s)
+2. Way(s) to reduce the problem into a smaller problem of the same type.
+3. Recursive case(s) that uses the solution of the smaller probelm to solve the original(large) problem.
 """
 
 # Q 1.6
-# because this is have a stop case
-#???
+# When you define a function, Python does evaluate the body of the function
 
 
 # Q 1.7
@@ -112,6 +111,7 @@ def paths(m, n):
     >>> paths(117, 1)
     1
     """
+    """
     def helper(i, j):
         right, up = 0, 0
         if i < m - 1:
@@ -124,7 +124,11 @@ def paths(m, n):
             return 1
         return right + up
     return helper(0, 0)
-
+    """
+    # good answer
+    if m == 1 or n == 1:
+        return 1
+    return paths(m-1, n) + paths(m, n-1)
 
 
 # Q 1.11
@@ -134,6 +138,7 @@ def merge(s1, s2):
     [1,2,3,4]
     >>> merge([1,2],[])
     [1,2]
+    """
     """
     def helper(a, b, res):
         if len(a) < 1:
@@ -149,7 +154,15 @@ def merge(s1, s2):
             b = b[1:]
         return helper(a, b, res)
     return helper(s1, s2, [])
-
+    """
+    if len(s1) == 0:
+        return s2
+    elif len(s2) == 0:
+        return s1
+    elif s1[0] < s2[0]:
+        return [s1[0]] + merge(s1[1:], s2)
+    else:
+        return [s2[0]] + merge(s1, s2[1:])
 
 
 # Q 1.12
@@ -174,6 +187,7 @@ def mario_number(level):
     >>> mario_number('---P----P-P---P--P-P----P-----P-')
     180
     """
+    """
     if len(level) <= 1:
         return 1
 
@@ -186,7 +200,14 @@ def mario_number(level):
         t = mario_number(level[1:])
 
     return f + s + t
-
+    """
+    def ways(n):
+        if n == len(level) - 1:
+            return 1
+        if n >= len(level) or level[n] == 'P':
+            return 0
+        return ways(n+1) + ways(n+2)
+    return ways(0)
 
 
 
