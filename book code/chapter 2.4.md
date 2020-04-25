@@ -1,0 +1,118 @@
+# cs61a week 6.1学习
+
+## list的内置函数的作用
+
+
+
+最近学习了cs61a，记录一下学习成果。下面主要讲一下`python list`的一些知识。里面的代码放到[pythontutor.com](http://pythontutor.com/composingprograms.html#mode=edit)这个网站，然后点击`Visualize Execution`，之后一步步的执行就可以看到里面`list`的变化。
+
+### 1. 复制一个新的list
+
+```python
+a = [1, [2,3], 4]
+b = list(a)
+c = a[:]
+```
+
+`list(s)`和`s[:]`复制新的列表的作用是等效。他们复制的是里面的值，所以**`b`和`c`的第二个元素和`a`的第二个元素，指向的是同一个子列表。**也就是说**用`list`和`s[:]`复制列表时，列表里面的子列表只是把指针复制过来了，而不是把值复制过来。**
+
+### 2. is 和 ==
+
+`is`比较的是两个他们**本身**，而`==`比较的是他们的**值**是不是一样。
+
+```python
+a = [1, 2, 3]
+b = [1, 2, 3]
+c = a
+a == b
+a is c
+```
+
+### 3. `append`和`extend`的区别
+
+`append`是直接在后面加上原来的列表。
+
+```python
+a = [1, [2,4],3]
+b = [[3], 4]
+c = 3
+a.append(b)
+a.append(c)
+b.append(c)
+```
+
+`extend`(和`+=`一样)是用新建一个列表加在后面，和`list`方法一样子列表知识指针。
+
+```python
+a = [1, 2]
+b = [1, 2]
+c = [3, [4]]
+a.extend(c)
+a += b
+c[1][0] = 10
+```
+
+### 4. `pop`和`remove`的用法
+
+`pop`方法移除并返回`list`中最后一个元素。当我们给他一个整数参数`i`，他移除并返回`list`中下标为`i`的元素。
+
+```python
+a = [0, 1, [2, 3], 4]
+b = a.pop(2)
+c = a.pop()
+```
+
+`remove`方法有一个参数，并且必须与`list`中至少一个值相同。他移除`list`中第一个与参数相同的值。如果在`list`中没有与参数相等的值，将产生`ValueError`。
+
+```python
+a = [10, 11, 10, 13, [12, 14]]
+a.remove([12, 14])
+a.remove(10)
+```
+
+### 5. `index`的使用
+
+`index`方法有一个参数，并且必须与`list`中至少一个值相同。她返回的`list`中第一个与参数相等的值的下标。如果在`list`中没有与参数相等的值，将产生`ValueError`。
+
+```python
+a = [13, 14, 13, 12, [13, 14], 15]
+a.index([13, 14])
+a.index(13)
+```
+
+### 6. `count`的使用
+
+`count`方法有一个参数，返回在`list`中与参数相同的值有几个。
+
+```python
+a = [1, [2, 3], 1, [4, 5]]
+a.count([2,3])
+a.count(1)
+a.count(5)
+```
+
+
+
+
+
+## 函数的默认参数
+
+注意函数默认参数的使用，看代码：
+
+```python
+def f(s=[]):
+	s.append(3)
+	return len(s)
+f() # result is 1
+f() # result is 2
+f() # result is 3
+```
+
+
+
+
+
+
+
+
+
