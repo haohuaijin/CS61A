@@ -29,6 +29,16 @@ def add_chars(w1, w2):
     True
     """
     "*** YOUR CODE HERE ***"
+    if len(w1) == 0:
+        return w2[:]
+    else:
+        if w1[0] == w2[0]:
+            return add_chars(w1[1:], w2[1:])
+        else:
+            return w2[0] + add_chars(w1[:], w2[1:])
+
+
+
 
 def add_trees(t1, t2):
     """
@@ -66,6 +76,21 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
+    labels = label(t1) + label(t2)
+    bran1 = branches(t1)
+    bran2 = branches(t2)
+    # 找到规律，不要穷举
+    if is_leaf(t1) or is_leaf(t2): 
+        return tree(labels, bran1+bran2)
+    else:
+        branch = [add_trees(i, j) for i, j in zip(bran1, bran2)]
+        if len(bran1) > len(bran2):
+            branch += bran1[len(bran2):]
+        else:
+            branch += bran2[len(bran1):]
+    return tree(labels, branch)
+
+
 
 # Shakespeare and Dictionaries
 def build_successors_table(tokens):
@@ -86,8 +111,9 @@ def build_successors_table(tokens):
     prev = '.'
     for word in tokens:
         if prev not in table:
-            "*** YOUR CODE HERE ***"
-        "*** YOUR CODE HERE ***"
+            table[prev] = [word]
+        else:
+            table[prev] = table[prev] + [word]
         prev = word
     return table
 
@@ -104,7 +130,8 @@ def construct_sent(word, table):
     import random
     result = ''
     while word not in ['.', '!', '?']:
-        "*** YOUR CODE HERE ***"
+        result += ' ' + word
+        word = random.choice(table[word])
     return result.strip() + word
 
 def shakespeare_tokens(path='shakespeare.txt', url='http://composingprograms.com/shakespeare.txt'):
