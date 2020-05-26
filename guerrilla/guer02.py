@@ -3,12 +3,15 @@
 ############################*
 #* 1.1
 """
-list, set. it can be change by function.
+1. Name two data types that are mutable. What does it mean to be mutable?
+!Dictionaries, Lists. Being mutable means we can modify them after they’ve been
+!created..
 """
 
 #* 1.2
 """
-dictrary, tuple
+2. Name at least two data types at are not mutable.
+!Tuples, functions, int, float
 """
 
 #* 1.3 
@@ -51,8 +54,22 @@ False
 
 
 #* 1.5
-#Todo 1. 
 
+""" #!
+1 What is the difference between the append function, extend function, and the
+’+’ operator?
+The append and extend functions both return a value of none. They just mutate the
+list that we are currently working on. For example, if we did a = [1,2,3].append(4),
+a would evaluate to None because the return value of the append function is None.
+However, when we are using the + operator, we return the value of the two lists
+added together. If we did a = [1,2,3] + [4,5,6], we would get that a is equal to
+[1,2,3,4,5,6]. The difference between appends and extends is that appends opens
+up one single space in the list to place the the parameter of appends. This allows
+for appends to take in both numbers and lists. The extends function takes in a list
+(that we will refer to as a) as its parameter and will open len(a) number of boxes
+in the original list that we are extending.
+
+"""
 #* 2.
 """
 >>> a = [1, 2, [3, 4], 5]
@@ -92,9 +109,26 @@ if is not two element list, it is error.
 """
 1. if wo don't use the construction and deconstruction to 
 get the feature and build a data type in a function.
+answer: 
+Put simply, a Data Abstraction Violation is when you bypass the constructors and
+selectors for an ADT, and directly use how its implemented in the rest of your code,
+thus assuming that its implementation will not change.
+We cannot assume we know how the ADT is constructed except by using constructors and likewise, we cannot assume we know how to access details of our ADT
+except through selectors. The details are supposed to be abstracted away by the
+constructors and selectors. If we bypass the constructors and selectors and access
+the details directly, any small change to the implementation of our ADT could break
+our entire program
 
 2. because the Data Abstraction, we can use the data type to 
 do many things, and we don't need to know the implement. 
+answer:
+With a correct implementation of these data types, it makes for more readable code
+because:
+-You can make constructors and selectors have more informative names.
+-Makes collaboration easier
+-Other programmers don’t have to worry about implementation details.
+-Prevents error propagation.
+-Fix errors in a single function rather than all over your program.
 """
 
 
@@ -127,13 +161,10 @@ def is_leaf(tree):
 
 #* 3.2
 def is_min_heap(t):
-    if is_leaf(t):
-        return True
-    now = True
     for bran in branches(t):
         if (label(bran) < label(t)) or (not is_min_heap(bran)):
-            now =  False
-    return now
+            return False
+    return True
 
 
 #* 3.3
@@ -162,7 +193,12 @@ def max_tree(t):
     >>> max_tree(tree(1, [tree(5, [tree(7)]),tree(3,[tree(9),tree(4)]),tree(6)]))
     tree(9, [tree(7, [tree(7)]),tree(9,[tree(9),tree(4)]),tree(6)])
     """
-   
+    if is_leaf(t):
+        return tree(label(t))
+    else:
+        new_branches = [max_tree(b) for b in branches(t)]
+        new_label = max([label(t)]+[label(bran) for bran in new_branches])
+        return tree(new_label, new_branches)
     
 #* 3.5
 def level_order(tree):
@@ -266,6 +302,16 @@ no
 iterable: can use iter() to become the iterator
 iterator: use next() to get next element
 generaotr: use yield return a iterator
+answer:
+An iterable is any object that can be passed to the built-in iter function. In other
+words, an iterable is any object that can produce iterators.
+An iterator is an object that provides sequential access to values one by one. Its
+contents can be accessed through the built-in next function, and it will signal there
+are no more values available with a StopIteration exception when next is called.
+A generator object is an iterator, but it is created in a special way – generator
+functions are defined as a function that yields its values instead of returning them.
+When generator functions are called, they return a generator object, which can then
+be used as an iterator.
 """
 
 #* 5.2
@@ -362,41 +408,37 @@ def black_hole(seq, trap):
 >>> wg = weird_gen(2)
 >>> next(wg)
 >>> next(weird_gen(2))
-4
+#! 4 true 44 
 >>> next(wg)
 end 
 
 >>> def greeter(x):
 ...     while x % 2 != 0:
 ...         print('hi')
-...         yield x
+...         yield x #!返回生成器
 ...         print('bye')
 >>> greeter(5)
-hi
-5
+#! <Generator Object> 
 
 >>> gen = greeter(5)
 >>> g = next(gen)
 hi
-bye
-hi
+
 
 >>> g = (g, next(gen))
 >>> g
-bye
-hi
-(5, 5)
+byehi(5, 5)
 
 >>> next(gen)
-bye
-hi
-5
+byehi5
 
 >>> next(g)
 error
 
 #! An iterator ______________________ a generator
 #! A generator is a(n) ______________________ iterator
+An iterator is not always represented by a generatorA generator is a(n) a
+special type of/user defined iterator
 """
 
 
@@ -453,6 +495,8 @@ def filter(iterable, fn):
 What could you use a generator for that you could 
 not use a standard iterator paired with a function for?
 #todo maybe i should use element one by one and don't save.
+answer:
+#! Call next on an infinite iterator
 """
 
 
@@ -494,9 +538,9 @@ def make_digit_getter(n):
         return total
     return helper
 
-get_year_digit = make_digit_getter(8102)
-for _ in range(5):
-     print(get_year_digit())
+#get_year_digit = make_digit_getter(8102)
+#for _ in range(5):
+#     print(get_year_digit())
 
 
 
