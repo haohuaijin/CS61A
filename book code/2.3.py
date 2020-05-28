@@ -153,9 +153,10 @@ def keep_to_all_link_my(f, s):
     if s == empty:
         return s
     elif f(first(s)) == True:
-        return link(first(s), keep_to_all_link(f, rest(s)))
+        return link(first(s), keep_to_all_link_my(f, rest(s)))
     else:
-        return keep_to_all_link(f, rest(s))
+        return keep_to_all_link_my(f, rest(s))
+
 def keep_to_all_link_answer(f, s):
     assert is_link(s), 's must is a link list'
     if s == empty:
