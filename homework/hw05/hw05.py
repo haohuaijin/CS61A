@@ -39,6 +39,41 @@ class VendingMachine:
     'Here is your soda.'
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+        self.stock = 0
+        self.add_money = 0
+
+    def restock(self, stock):
+        self.stock += stock
+        res = "Current {0} stock: {1}".format(self.name, self.stock)
+        return res
+    
+    def vend(self):
+        if self.stock == 0:
+            res = "Machine is out of stock."
+        elif self.price > self.add_money:
+            res = "You must add ${} more funds.".format(self.price - self.add_money)
+        elif self.price < self.add_money:
+            res = "Here is your {} and ${} change.".format(self.name, self.add_money - self.price)
+            self.add_money = 0
+            self.stock -= 1
+        else:
+            res = "Here is your {}.".format(self.name)
+            self.add_money = 0
+            self.stock -= 1
+        return res
+
+    def add_funds(self, money):
+        if self.stock == 0:
+            res = "Machine is out of stock. Here is your ${}.".format(money)
+        else:
+            self.add_money += money
+            res = "Current balance: ${}".format(self.add_money)
+        return res
+
+
 
 def preorder(t):
     """Return a list of the entries in this tree in the order that they
@@ -51,6 +86,13 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
+    if t.is_leaf():
+        return [t.label]
+    else:
+        branch = []
+        for bran in t.branches:
+            branch += preorder(bran)
+        return [t.label] + branch
 
 def store_digits(n):
     """Stores the digits of a positive number n in a linked list.
@@ -64,6 +106,13 @@ def store_digits(n):
     Link(8, Link(7, Link(6)))
     """
     "*** YOUR CODE HERE ***"
+    now, n = Link(n%10), n//10
+    res = now
+    while n != 0:
+        res = Link(n%10, now)
+        now = res
+        n = n//10
+    return res
 
 def generate_paths(t, value):
     """Yields all possible paths from the root of t to a node with the label value
@@ -99,13 +148,13 @@ def generate_paths(t, value):
     >>> sorted(list(path_to_2))
     [[0, 2], [0, 2, 1, 2]]
     """
+    if t.label == value:
+        yield [t.label]
+    for bran in t.branches:
+        for b in list(generate_paths(bran, value)):
+            yield [t.label] + b
 
-    "*** YOUR CODE HERE ***"
-
-    for _______________ in _________________:
-        for _______________ in _________________:
-
-            "*** YOUR CODE HERE ***"
+            
 
 ## Optional Questions
 def is_bst(t):
