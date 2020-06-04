@@ -47,10 +47,11 @@ class VendingMachine:
 
     def restock(self, stock):
         self.stock += stock
-        res = "Current {0} stock: {1}".format(self.name, self.stock)
-        return res
+        return "Current {0} stock: {1}".format(self.name, self.stock)
+        
     
     def vend(self):
+        """
         if self.stock == 0:
             res = "Machine is out of stock."
         elif self.price > self.add_money:
@@ -64,14 +65,25 @@ class VendingMachine:
             self.add_money = 0
             self.stock -= 1
         return res
+        """
+        if self.stock == 0:
+            return 'Machine is out of stock.'
+        difference = self.price - self.add_money
+        if difference > 0:
+            return 'You must add ${0} more funds.'.format(difference)
+        message = 'Here is your {0}'.format(self.name)
+        if difference != 0:
+            message += ' and ${0} change'.format(-difference)
+        self.add_money = 0
+        self.stock -= 1
+        return message + '.'
+
 
     def add_funds(self, money):
         if self.stock == 0:
-            res = "Machine is out of stock. Here is your ${}.".format(money)
-        else:
-            self.add_money += money
-            res = "Current balance: ${}".format(self.add_money)
-        return res
+            return "Machine is out of stock. Here is your ${}.".format(money)
+        self.add_money += money
+        return "Current balance: ${}".format(self.add_money)
 
 
 
@@ -88,11 +100,10 @@ def preorder(t):
     "*** YOUR CODE HERE ***"
     if t.is_leaf():
         return [t.label]
-    else:
-        branch = []
-        for bran in t.branches:
-            branch += preorder(bran)
-        return [t.label] + branch
+    branch = []
+    for bran in t.branches:
+        branch += preorder(bran)
+    return [t.label] + branch
 
 def store_digits(n):
     """Stores the digits of a positive number n in a linked list.
@@ -106,12 +117,19 @@ def store_digits(n):
     Link(8, Link(7, Link(6)))
     """
     "*** YOUR CODE HERE ***"
+    """
     now, n = Link(n%10), n//10
     res = now
     while n != 0:
         res = Link(n%10, now)
         now = res
         n = n//10
+    return res
+    """
+    res = Link.empty
+    while n > 0:
+        res = Link(n%10, res)
+        n //= 10
     return res
 
 def generate_paths(t, value):
@@ -151,7 +169,7 @@ def generate_paths(t, value):
     if t.label == value:
         yield [t.label]
     for bran in t.branches:
-        for b in list(generate_paths(bran, value)):
+        for b in generate_paths(bran, value):
             yield [t.label] + b
 
             
@@ -183,6 +201,27 @@ def is_bst(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    def bst_min(tree):
+        if tree.is_leaf():
+            return tree.label
+        return min(bst_min(tree.branches[0]), tree.label)
+    def bst_max(tree):
+        if tree.is_leaf():
+            return tree.label
+        return max(bst_max(tree.branches[-1]), tree.label)
+   
+    if t.is_leaf():
+        return True
+    elif len(t.branches) == 1:
+        b = t.branches[0]
+        return (bst_max(b) <= t.label or bst_min(b) > t.label) and is_bst(b)
+    else:
+        b1, b2 = t.branches[0], t.branches[1]
+        valid_branches = is_bst(b1) and is_bst(b2)
+        return valid_branches and bst_max(b1) <= t.label and bst_min(b2) > t.label 
+
+    
+
 class Mint:
     """A mint creates coins by stamping on years.
 
@@ -220,9 +259,11 @@ class Mint:
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
+        return kind(self.year)
 
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = Mint.current_year
 
 class Coin:
     def __init__(self, year):
@@ -230,12 +271,21 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        """
+        increase = Mint.current_year - self.year
+        if increase < 50:
+            return self.cents
+        else:
+            return self.cents + increase - 50
+        """
+        return self.cents + max(0, Mint.current_year - self.year - 50)
 
 class Nickel(Coin):
     cents = 5
 
 class Dime(Coin):
     cents = 10
+
 def remove_all(link , value):
     """Remove all the nodes containing value in link. Assume that the
     first element is never removed.
@@ -254,6 +304,11 @@ def remove_all(link , value):
     <0 1>
     """
     "*** YOUR CODE HERE ***"
+    while link.rest != Link.empty and link.rest.first == value:
+        link.rest = link.rest.rest
+    if link.rest != Link.empty:
+        remove_all(link.rest, value)
+
 def deep_map(f, link):
     """Return a Link with the same structure as link but with fn mapped over
     its elements. If an element is an instance of a linked list, recursively
@@ -268,6 +323,14 @@ def deep_map(f, link):
     <<2 <4 6> 8> <<10>>>
     """
     "*** YOUR CODE HERE ***"
+    if link == Link.empty:
+        return Link.empty
+    if isinstance(link.first, Link):
+        first = deep_map(f, link.first)
+    else:
+        first = f(link.first)
+    return Link(first, deep_map(f, link.rest))
+
 
 ## Link Class ##
 
