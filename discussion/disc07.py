@@ -243,25 +243,68 @@ def multiply_lnks(lst_of_lnks):
     >>> p.rest.rest.rest is Link.empty
     True
     """
-    res = Link.empty
+    #! 待优化
+    note = Link(0)
+    res = note
     while True:
         first = 1
-        for lst in lst_of_lnks:
-            first *= lst.first
-            lst = lst.rest
-        res = Link(first, res)
-        for lst in lst_of_lnks:
-            if lst is Link.empty:
-                return res
-    return res
+        for i in range(len(lst_of_lnks)):
+            first *= lst_of_lnks[i].first
+            lst_of_lnks[i] = lst_of_lnks[i].rest
+        note.rest = Link(first)
+        note = note.rest
+        for i in range(len(lst_of_lnks)):
+            if not isinstance(lst_of_lnks[i], Link):
+                return res.rest
+    return res.rest
 
 
+    
+#* 3.3
+def filter_link(link, f):
+    """
+    >>> link = Link(1, Link(2, Link(3)))
+    >>> g = filter_link(link, lambda x: x % 2 == 0)
+    >>> next(g)
+    2
+    >>> next(g)
+    StopIteration
+    >>> list(filter_link(link, lambda x: x % 2 != 0))
+    [1, 3]
+    """
+    while link != Link.empty:
+        if f(link.first):
+            yield link.first
+        link = link.rest
 
 
+def filter_no_iter(link, f):
+    """
+    >>> link = Link(1, Link(2, Link(3)))
+    >>> list(filter_no_iter(link, lambda x: x % 2 != 0))
+    [1, 3]
+    """
+    if link == Link.empty:
+        return
+    elif f(link.first):
+        yield link.first
+    yield from filter_no_iter(link.rest, f)
 
 
-
-
+##################################*
+#* Midterm Teview Snax
+def feed(snax, x, y):
+    """
+    >>> feed([1, 1, 1], 2, 2) # The two robots both refill once at the beginning
+    2
+    >>> feed([1, 2, 2], 2, 2) # Only one robot refills to feed the middle student
+    3
+    >>> feed([1, 1, 1, 2, 2], 2, 2)
+    4
+    >>> feed([3, 2, 1, 3, 2, 1, 1, 2, 3], 3, 3)
+    6
+    """
+    
 
 
 
