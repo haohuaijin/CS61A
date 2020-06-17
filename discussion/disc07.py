@@ -304,7 +304,27 @@ def feed(snax, x, y):
     >>> feed([3, 2, 1, 3, 2, 1, 1, 2, 3], 3, 3)
     6
     """
-    
+    """
+    i, j = 0, len(snax)-1
+    le, ri = x, y
+    res = 2
+    while j > i:
+        le, i = le-snax[i], i+1
+        if le <= 0:
+            le, res = le+x, res+1
+
+        print(le)
+        if sum(snax[i:j+1]) <= le or sum(snax[i:j]) <= ri:
+            return res
+
+        ri, j = ri-snax[j], j-1
+        if sum(snax[i:j+1]) <= le or sum(snax[i:j]) <= ri:
+            return res
+        print("ri = {}".format(ri))
+        if ri <= 0:
+            ri, res = ri+y, res+1
+    return res
+    """
 
 
 
