@@ -104,6 +104,7 @@ class Ant(Insect):
 
     implemented = False  # Only implemented Ant classes should be instantiated
     food_cost = 0
+    blocks_path = True
     # ADD CLASS ATTRIBUTES HERE
 
     def __init__(self, armor=1):
@@ -164,6 +165,8 @@ class ThrowerAnt(Ant):
     implemented = True
     damage = 1
     food_cost = 3
+    min_range = 0
+    max_range = float('inf')
     # ADD/OVERRIDE CLASS ATTRIBUTES HERE
 
     def nearest_bee(self, beehive):
@@ -174,11 +177,20 @@ class ThrowerAnt(Ant):
         """
         # BEGIN Problem 3 and 4
         #! the most right place is the beehive
+        count = 0
         tmp_place = self.place
+        while count < self.min_range:
+            if tmp_place == beehive:
+                return None
+            tmp_place = tmp_place.entrance
+            count += 1
         while len(tmp_place.bees) == 0:
             if not tmp_place.entrance or tmp_place.entrance == beehive:
                 return None
+            if count >= self.max_range:
+                return None
             tmp_place = tmp_place.entrance
+            count += 1
         return random_or_none(tmp_place.bees) # REPLACE THIS LINE
         # END Problem 3 and 4
 
@@ -208,7 +220,9 @@ class ShortThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    min_range = 0
+    max_range = 3
     # END Problem 4
 
 class LongThrower(ThrowerAnt):
@@ -218,7 +232,9 @@ class LongThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    min_range = 5
+    max_range = float('inf')
     # END Problem 4
 
 class FireAnt(Ant):
@@ -229,7 +245,7 @@ class FireAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 5
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 5
 
     def __init__(self, armor=3):
@@ -244,7 +260,17 @@ class FireAnt(Ant):
         if the fire ant dies.
         """
         # BEGIN Problem 5
-        "*** YOUR CODE HERE ***"
+        self.armor -= amount
+        bees = self.place.bees[:]
+        for bee in bees:
+            bee.reduce_armor(amount)
+        if self.armor <= 0:
+            bees = self.place.bees[:]
+            for bee in bees:
+                bee.reduce_armor(self.damage)
+            self.place.remove_insect(self)
+            self.death_callback()
+
         # END Problem 5
 
 class HungryAnt(Ant):
@@ -255,22 +281,34 @@ class HungryAnt(Ant):
     food_cost = 4
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 6
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    time_to_digest = 3
     # END Problem 6
 
     def __init__(self, armor=1):
         # BEGIN Problem 6
         "*** YOUR CODE HERE ***"
+        Ant.__init__(self, armor)
+        self.digesting = 0
         # END Problem 6
 
     def eat_bee(self, bee):
         # BEGIN Problem 6
         "*** YOUR CODE HERE ***"
+        bee.reduce_armor(bee.armor)
+        self.digesting = self.time_to_digest
         # END Problem 6
 
     def action(self, gamestate):
         # BEGIN Problem 6
         "*** YOUR CODE HERE ***"
+        if not self.digesting:
+            bee = random_or_none(self.place.bees)
+            if bee:
+                self.eat_bee(bee)
+        else:
+            self.digesting -= 1
+            
         # END Problem 6
 
 class NinjaAnt(Ant):
@@ -279,14 +317,18 @@ class NinjaAnt(Ant):
     name = 'Ninja'
     damage = 1
     food_cost = 5
+    blocks_path = False
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 7
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 7
 
     def action(self, gamestate):
         # BEGIN Problem 7
         "*** YOUR CODE HERE ***"
+        bees = self.place.bees[:]
+        for bee in bees:
+            bee.reduce_armor(self.damage)
         # END Problem 7
 
 # BEGIN Problem 8
@@ -438,7 +480,11 @@ class Bee(Insect):
         """Return True if this Bee cannot advance to the next Place."""
         # Phase 4: Special handling for NinjaAnt
         # BEGIN Problem 7
-        return self.place.ant is not None
+        is_any_ant = self.place.ant is not None
+        if is_any_ant:
+            is_ninjaant = self.place.ant.blocks_path
+            return is_ninjaant
+        return is_any_ant
         # END Problem 7
 
     def action(self, gamestate):
