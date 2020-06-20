@@ -125,7 +125,15 @@ class Ant(Insect):
             place.ant = self
         else:
             # BEGIN Problem 9
-            assert place.ant is None, 'Two ants in {0}'.format(place)
+            if isinstance(place.ant, ContainerAnt) and not isinstance(self, ContainerAnt):
+                if place.ant.contained_ant:
+                    assert place.ant is None, 'Two ants in {0}'.format(place)
+                place.ant.contain_ant(self)
+            elif isinstance(self, ContainerAnt) and not isinstance(place.ant, ContainerAnt):
+                self.contain_ant(place.ant)
+                place.ant = self
+            else:
+                assert place.ant is None, 'Two ants in {0}'.format(place)
             # END Problem 9
         Insect.add_to(self, place)
 
@@ -333,6 +341,15 @@ class NinjaAnt(Ant):
 
 # BEGIN Problem 8
 # The WallAnt class
+class WallAnt(Ant):
+
+    name = "Wall"
+    implemented = True
+    food_cost = 4
+
+    def __init__(self, armor=4):
+        Ant.__init__(self, armor)
+        
 # END Problem 8
 
 class ContainerAnt(Ant):
@@ -342,12 +359,17 @@ class ContainerAnt(Ant):
 
     def can_contain(self, other):
         # BEGIN Problem 9
-        "*** YOUR CODE HERE ***"
+        if self.contained_ant:
+            return False
+        if isinstance(other, ContainerAnt):
+            return False
+        return True
         # END Problem 9
 
     def contain_ant(self, ant):
         # BEGIN Problem 9
-        "*** YOUR CODE HERE ***"
+        if self.can_contain(ant):
+            self.contained_ant = ant
         # END Problem 9
 
     def remove_ant(self, ant):
@@ -367,7 +389,8 @@ class ContainerAnt(Ant):
 
     def action(self, gamestate):
         # BEGIN Problem 9
-        "*** YOUR CODE HERE ***"
+        if self.contained_ant:
+            self.contained_ant.action(gamestate)
         # END Problem 9
 
 class BodyguardAnt(ContainerAnt):
@@ -377,8 +400,11 @@ class BodyguardAnt(ContainerAnt):
     food_cost = 4
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 9
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 9
+    def __init__(self, armor=2):
+        Ant.__init__(self, armor)
+        self.contained_ant = None
 
 class TankAnt(ContainerAnt):
     """TankAnt provides both offensive and defensive capabilities."""
@@ -388,7 +414,7 @@ class TankAnt(ContainerAnt):
     food_cost = 6
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 10
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 10
 
     def __init__(self, armor=2):
@@ -396,7 +422,10 @@ class TankAnt(ContainerAnt):
 
     def action(self, gamestate):
         # BEGIN Problem 10
-        "*** YOUR CODE HERE ***"
+        ContainerAnt.action(self, gamestate)
+        bees = self.place.bees[:]
+        for bee in bees:
+            bee.reduce_armor(self.damage)
         # END Problem 10
 
 class Water(Place):
