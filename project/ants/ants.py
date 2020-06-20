@@ -51,7 +51,8 @@ class Insect:
     """An Insect, the base class of Ant and Bee, has armor and a Place."""
 
     damage = 0
-    # ADD CLASS ATTRIBUTES HERE
+    is_watersafe = False
+    # ADD CLASS ATTRIBUTES HEREbee
 
     def __init__(self, armor, place=None):
         """Create an Insect with an ARMOR amount and a starting PLACE."""
@@ -110,6 +111,7 @@ class Ant(Insect):
     def __init__(self, armor=1):
         """Create an Ant with an ARMOR quantity."""
         Insect.__init__(self, armor)
+        self.count = 0
 
     def can_contain(self, other):
         return False
@@ -435,28 +437,41 @@ class Water(Place):
         """Add an Insect to this place. If the insect is not watersafe, reduce
         its armor to 0."""
         # BEGIN Problem 11
-        "*** YOUR CODE HERE ***"
+        Place.add_insect(self, insect)
+        if not insect.is_watersafe:
+            Insect.reduce_armor(insect, insect.armor)
         # END Problem 11
 
 # BEGIN Problem 12
 # The ScubaThrower class
+class ScubaThrower(ThrowerAnt):
+    
+    name = 'Scuba'
+    is_watersafe = True
+    food_cost = 6
 # END Problem 12
 
 # BEGIN Problem 13
-class QueenAnt(Ant):  # You should change this line
+class QueenAnt(ScubaThrower):  # You should change this line
 # END Problem 13
     """The Queen of the colony. The game is over if a bee enters her place."""
 
     name = 'Queen'
     food_cost = 7
+    is_true = True
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 13
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 13
 
     def __init__(self, armor=1):
         # BEGIN Problem 13
-        "*** YOUR CODE HERE ***"
+        ScubaThrower.__init__(self, armor)
+        if QueenAnt.is_true:
+            QueenAnt.is_true = False
+            self.is_queen = True
+        else:
+            self.is_queen = False
         # END Problem 13
 
     def action(self, gamestate):
@@ -466,7 +481,22 @@ class QueenAnt(Ant):  # You should change this line
         Impostor queens do only one thing: reduce their own armor to 0.
         """
         # BEGIN Problem 13
-        "*** YOUR CODE HERE ***"
+        # 在这里攻击一次，然后一起攻击一次
+        if self.is_queen:
+            ThrowerAnt.action(self, gamestate)
+            now_place = self.place.exit
+            while now_place:
+                if now_place.ant:#! 有bug
+                    if now_place.ant.count == 0:
+                        now_place.ant.damage *= 2
+                        now_place.ant.count += 1
+                    if isinstance(now_place.ant, ContainerAnt):
+                        if now_place.ant.contained_ant and now_place.ant.contained_ant.count == 0:
+                            now_place.ant.contained_ant.damage *= 2
+                            now_place.ant.contained_ant.count += 1
+                now_place = now_place.exit
+        else:
+            self.reduce_armor(self.armor)
         # END Problem 13
 
     def reduce_armor(self, amount):
@@ -474,9 +504,18 @@ class QueenAnt(Ant):  # You should change this line
         remaining, signal the end of the game.
         """
         # BEGIN Problem 13
-        "*** YOUR CODE HERE ***"
+        if self.is_queen:
+            self.armor -= amount
+            if self.armor <= 0:
+                self.place.remove_insect(self)
+                bees_win()
+        else:
+            ScubaThrower.reduce_armor(self, amount)
         # END Problem 13
 
+    def remove_from(self, place):
+        if not self.is_queen:
+            Ant.remove_from(self, place)
 
 
 class AntRemover(Ant):
@@ -493,6 +532,7 @@ class Bee(Insect):
 
     name = 'Bee'
     damage = 1
+    is_watersafe = True
     # OVERRIDE CLASS ATTRIBUTES HERE
 
 
