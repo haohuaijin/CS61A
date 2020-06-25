@@ -486,7 +486,7 @@ class QueenAnt(ScubaThrower):  # You should change this line
             ThrowerAnt.action(self, gamestate)
             now_place = self.place.exit
             while now_place:
-                if now_place.ant:#! 有bug
+                if now_place.ant:
                     if now_place.ant.count == 0:
                         now_place.ant.damage *= 2
                         now_place.ant.count += 1
@@ -533,6 +533,8 @@ class Bee(Insect):
     name = 'Bee'
     damage = 1
     is_watersafe = True
+    is_slow = 0
+    is_back = False
     # OVERRIDE CLASS ATTRIBUTES HERE
 
 
@@ -565,7 +567,7 @@ class Bee(Insect):
         destination = self.place.exit
         # Extra credit: Special handling for bee direction
         # BEGIN EC
-        "*** YOUR CODE HERE ***"
+        
         # END EC
         if self.blocked():
             self.sting(self.place.ant)
@@ -590,7 +592,16 @@ def make_slow(action, bee):
     action -- An action method of some Bee
     """
     # BEGIN Problem EC
-    "*** YOUR CODE HERE ***"
+    def helper(gamestate):
+        if bee.is_slow > 0:
+            if gamestate.time % 2 == 0:
+                pass
+            else:
+                action(gamestate)
+            bee.is_slow -= 1
+        else:
+            action(gamestate)
+    return helper
     # END Problem EC
 
 def make_scare(action, bee):
@@ -599,13 +610,15 @@ def make_scare(action, bee):
     action -- An action method of some Bee
     """
     # BEGIN Problem EC
-    "*** YOUR CODE HERE ***"
+        
     # END Problem EC
 
 def apply_effect(effect, bee, duration):
     """Apply a status effect to a BEE that lasts for DURATION turns."""
     # BEGIN Problem EC
-    "*** YOUR CODE HERE ***"
+    bee.action = effect(bee.action, bee)
+    if effect is make_slow:
+        bee.is_slow = duration
     # END Problem EC
 
 
@@ -615,7 +628,7 @@ class SlowThrower(ThrowerAnt):
     name = 'Slow'
     food_cost = 4
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem EC
 
     def throw_at(self, target):
@@ -634,7 +647,7 @@ class ScaryThrower(ThrowerAnt):
 
     def throw_at(self, target):
         # BEGIN Problem EC
-        "*** YOUR CODE HERE ***"
+        return 
         # END Problem EC
 
 class LaserAnt(ThrowerAnt):
