@@ -76,6 +76,8 @@ def inc_subseqs(s):
     >>> sorted(seqs2)
     [[], [1], [1], [1, 1], [1, 1, 2], [1, 2], [1, 2], [2]]
     """
+    """
+    #! my soultion
     def subseq_helper(s, prev):
         if not s:
             return [[]]
@@ -86,6 +88,18 @@ def inc_subseqs(s):
             b = [lst for lst in a if sorted(lst) == lst]
             return insert_into_all(s[0], b) + b
     return subseq_helper(s, -1)
+    """
+    #!!! the solution
+    def subseq_helper(s, prev):
+        if not s:
+            return [[]]
+        elif s[0] < prev:
+            return subseq_helper(s[1:], prev)
+        else:
+            a = subseq_helper(s[1:], s[0])
+            b = subseq_helper(s[1:], prev)
+            return insert_into_all(s[0], a) + b
+    return subseq_helper(s, 0)
 
 # Generators
 def permutations(seq):
@@ -373,9 +387,9 @@ def trade(first, second):
     """
     m, n = 1, 1
 
-    equal_prefix = lambda: ______________________
-    while _______________________________:
-        if __________________:
+    equal_prefix = lambda: m <= len(first) and n <= len(second)
+    while sum(first[:m]) != sum(second[:n]) and m <= len(first) and n <= len(second):
+        if sum(first[:m]) < sum(second[:n]):
             m += 1
         else:
             n += 1
@@ -385,6 +399,8 @@ def trade(first, second):
         return 'Deal!'
     else:
         return 'No deal!'
+
+
 def card(n):
     """Return the playing card numeral as a string for a positive n <= 13."""
     assert type(n) == int and n > 0 and n <= 13, "Bad card n"
@@ -410,11 +426,11 @@ def shuffle(cards):
     ['A♡', 'A♢', 'A♤', 'A♧', '2♡', '2♢', '2♤', '2♧', '3♡', '3♢', '3♤', '3♧']
     """
     assert len(cards) % 2 == 0, 'len(cards) must be even'
-    half = _______________
+    half = list(cards[0:len(cards)//2])
     shuffled = []
-    for i in _____________:
-        _________________
-        _________________
+    for i in range(len(half)):
+        shuffled.append(half[i])
+        shuffled.append(cards[len(half)+i])
     return shuffled
 
 # Recursive Objects
@@ -432,12 +448,13 @@ def deep_len(lnk):
     >>> deep_len(levels)
     5
     """
-    if ______________:
+    if lnk == Link.empty:
         return 0
-    elif ______________:
+    elif isinstance(lnk, int):
         return 1
     else:
-        return _________________________
+        return deep_len(lnk.first) + deep_len(lnk.rest)
+
 
 def make_to_string(front, mid, back, empty_repr):
     """ Returns a function that turns linked lists to strings.
@@ -455,11 +472,13 @@ def make_to_string(front, mid, back, empty_repr):
     '()'
     """
     def printer(lnk):
-        if ______________:
-            return _________________________
+        if lnk == Link.empty:
+            return empty_repr
         else:
-            return _________________________
+            return front + str(lnk.first) + mid + printer(lnk.rest) + back
     return printer
+
+
 def prune_small(t, n):
     """Prune the tree mutatively, keeping only the n branches
     of each node with the smallest label.
@@ -477,11 +496,12 @@ def prune_small(t, n):
     >>> t3
     Tree(6, [Tree(1), Tree(3, [Tree(1), Tree(2)])])
     """
-    while ___________________________:
-        largest = max(_______________, key=____________________)
-        _________________________
-    for __ in _____________:
-        ___________________
+    while len(t.branches) > n:
+        largest = max(t.branches, key=lambda x: x.label)
+        t.branches.remove(largest)
+    for bran in t.branches:
+        prune_small(bran, n)
+
 
 # Recursion / Tree Recursion
 def num_trees(n):
@@ -504,9 +524,9 @@ def num_trees(n):
     429
 
     """
-    if ____________________:
-        return _______________
-    return _______________
+    if n <= 2:
+        return 1
+    return sum([num_trees(i)*num_trees(n-i) for i in range(1,n)])
 
 
 # Tree class
