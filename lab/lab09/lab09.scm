@@ -1,7 +1,11 @@
 ;; Scheme ;;
 
 (define (over-or-under a b)
-  'YOUR-CODE-HERE
+  (cond 
+  ((< a b) -1)
+  ((> a b) 1)
+  (else 0)
+  )
 )
 
 ;;; Tests
@@ -13,7 +17,7 @@
 ; expect 0
 
 (define (filter-lst fn lst)
-  'YOUR-CODE-HERE
+  (filter fn lst)  
 )
 
 ;;; Tests
@@ -23,7 +27,7 @@
 ; expect (0 2 8)
 
 (define (make-adder n)
-  'YOUR-CODE-HERE
+  (lambda (x) (+ n x))
 )
 
 ;;; Tests
@@ -34,15 +38,15 @@
 ;; Extra questions
 
 (define lst
-  'YOUR-CODE-HERE
+  (list '(1) 2 '(3 4) 5)
 )
 
 (define (composed f g)
-  'YOUR-CODE-HERE
+  (lambda (x) (f (g x)))
 )
 
 (define (remove item lst)
-  'YOUR-CODE-HERE
+  (filter-lst (lambda (x) (cond ((= x item) 0) (else 1))) lst)
 )
 
 
@@ -55,14 +59,45 @@
 ; expect (3 1 4 4)
 
 (define (no-repeats s)
-  'YOUR-CODE-HERE
-)
+  (cond
+    ((null? s) nil)
+    (else
+      (cons 
+        (car s)
+        (no-repeats
+          (filter-lst (lambda (x) (cond ((= x (car s)) 0) (else 1))) (cdr s)); method 1
+          ;(remove (car s) (cdr s)) method 2
+          )
+        )
+      )
+    )
+  )
 
 (define (substitute s old new)
-  'YOUR-CODE-HERE
+  (cond
+    ((null? s) nil)
+    (else
+      (cons
+        (cond 
+          ((pair? (car s)) (substitute (car s) old new))
+          (else (cond ((equal? (car s) old) new) (else (car s))))
+        )
+        (substitute (cdr s) old new)
+      )
+    )
+  )
 )
 
 
 (define (sub-all s olds news)
-  'YOUR-CODE-HERE
+  (cond 
+    ((null? olds) s)
+    (else
+      (sub-all 
+        (substitute s (car olds) (car news)) 
+        (cdr olds) 
+        (cdr news)
+      )
+    )
+  )
 )
