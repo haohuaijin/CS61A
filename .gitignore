@@ -4,6 +4,7 @@ tests
 
 cs61a-sol
 
+.DS_Store
 # Prerequisites
 *.d
 
