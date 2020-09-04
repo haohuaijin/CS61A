@@ -1,8 +1,8 @@
 
 __pycache__
 tests
-
 cs61a-sol
+
 *.db
 .DS_Store
 # Prerequisites
