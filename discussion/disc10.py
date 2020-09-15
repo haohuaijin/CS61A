@@ -78,7 +78,7 @@ exp.first == 'and'
 """
 
 
-#! 3.2 haven't check the correct
+# 3.2 
 """
 (define (my-append a b)
     (if (null? a) 
@@ -91,39 +91,39 @@ exp.first == 'and'
     (cond 
         ((equal? s nil) nil)
         (else
-            (my-append (replicate s.first.first s.first.second) (uncompress s.second))
+            (my-append (replicate (car (car s)) (car (cdr (car s))) ) (uncompress (cdr s)))
         )
     )
 )
 """
 
-#! 3.3
+# 3.3
 """
 (define (map fn lst)
     (cond 
         ((equal? lst nil) nil)    
         (else
-            (cons (fn lst.first) (map fn lst.second))
+            (cons (fn (car lst)) (map fn (cdr lst)))
         )
     )
 )
 """
 
-#! 3.4
+# 3.4
 """
 (define (make-tree label branches) (cons label branches)) 
 
 (define (label tree) 
-    tree.first
+    (car tree)
 )
 
 (define (branches tree)
-    tree.second
+    (cdr tree)
 )
 """
 
 
-#! 3.5
+#! 3.5 没有答案没验证
 """
 (define (tree-sum tree)
     (cond
@@ -138,9 +138,38 @@ exp.first == 'and'
     (cond
         ((equal? lst nil) 0)
         (else
-            (+ lst.first (helper lst.second))
+            (+ (car lst) (helper (cdr lst)))
         )
     )
 )
 """
+
+
+#############################################
+#    1.That Factors Into Your Learning      #
+#############################################
+"""
+(define(factors n)
+    (define(factors-helper i n)
+        (if (equal? i n)
+            nil
+            (if (equal? (modulo n i) 0) 
+                (cons  i (factors-helper (+ i 1) n))
+                (factors-helper (+ i 1) n) 
+            )
+        )
+    )
+    (factors-helper 1 n)
+)
+"""
+
+
+
+
+
+
+
+
+
+
 
