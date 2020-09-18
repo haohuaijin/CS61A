@@ -35,10 +35,18 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     if scheme_symbolp(first) and first in SPECIAL_FORMS:
         return SPECIAL_FORMS[first](rest, env)
     else:
-        # BEGIN PROBLEM 4
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 4
-
+        #! BEGIN PROBLEM 4
+        if isinstance(first, Pair):
+            operator = scheme_eval(first, env)
+        else:
+            operator = env.lookup(first)
+        validate_procedure(operator)
+        def helper(ex):
+            return scheme_eval(ex, env)
+        operands = rest.map(helper) #* user the helper function to set defualt env
+        return scheme_apply(operator, operands, env)
+        #! END PROBLEM 4
+ 
 def self_evaluating(expr):
     """Return whether EXPR evaluates to itself."""
     return (scheme_atomp(expr) and not scheme_symbolp(expr)) or expr is None
@@ -92,13 +100,17 @@ class Frame(object):
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN PROBLEM 2
-        "*** YOUR CODE HERE ***"
+        self.bindings[symbol] = value
         # END PROBLEM 2
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
         # BEGIN PROBLEM 2
-        "*** YOUR CODE HERE ***"
+        parent = self
+        while parent:
+            if symbol in parent.bindings:
+                return parent.bindings[symbol]
+            parent = parent.parent
         # END PROBLEM 2
         raise SchemeError('unknown identifier: {0}'.format(symbol))
 
@@ -155,7 +167,11 @@ class BuiltinProcedure(Procedure):
         # Convert a Scheme list to a Python list
         python_args = []
         # BEGIN PROBLEM 3
-        "*** YOUR CODE HERE ***"
+        while args:
+            python_args.append(args.first)
+            args = args.rest
+        if self.use_env:
+            python_args.append(self.use_env)
         # END PROBLEM 3
         try:
             return self.fn(*python_args)
@@ -236,9 +252,13 @@ def do_define_form(expressions, env):
     target = expressions.first
     if scheme_symbolp(target): 
         validate_form(expressions, 2, 2) # Checks that expressions is a list of length exactly 2
-        # BEGIN PROBLEM 5
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 5
+        #! BEGIN PROBLEM 5
+        value = expressions.rest.first
+        if isinstance(value, Pair):
+            value = scheme_eval(value, env)
+        env.define(target, value)
+        return target
+        #! END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
