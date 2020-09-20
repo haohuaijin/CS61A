@@ -166,13 +166,13 @@ class BuiltinProcedure(Procedure):
             raise SchemeError('arguments are not in a list: {0}'.format(args))
         # Convert a Scheme list to a Python list
         python_args = []
-        # BEGIN PROBLEM 3
+        #! BEGIN PROBLEM 3
         while args:
             python_args.append(args.first)
             args = args.rest
         if self.use_env:
-            python_args.append(self.use_env)
-        # END PROBLEM 3
+            python_args.append(env) #! 这里由于做题的时候不细心，传入了self.use_env,导致做第五问的时候报错了
+        #! END PROBLEM 3
         try:
             return self.fn(*python_args)
         except TypeError as err:
@@ -275,9 +275,9 @@ def do_quote_form(expressions, env):
     Pair('+', Pair('x', Pair(2, nil)))
     """
     validate_form(expressions, 1, 1)
-    # BEGIN PROBLEM 6
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 6
+    #! BEGIN PROBLEM 6
+    return expressions.first
+    #! END PROBLEM 6
 
 def do_begin_form(expressions, env):
     """Evaluate a begin form.

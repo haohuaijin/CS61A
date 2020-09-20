@@ -130,17 +130,17 @@ def scheme_read(src):
         raise EOFError
     val = src.pop_first() # Get and remove the first token
     if val == 'nil':
-        # BEGIN PROBLEM 1
+        #! BEGIN PROBLEM 1
         return nil
-        # END PROBLEM 1
+        #! END PROBLEM 1
     elif val == '(':
-        # BEGIN PROBLEM 1
+        #! BEGIN PROBLEM 1
         return read_tail(src)
-        # END PROBLEM 1
+        #! END PROBLEM 1
     elif val == "'":
-        # BEGIN PROBLEM 6
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 6
+        #! BEGIN PROBLEM 6
+        return Pair("quote", Pair(scheme_read(src), nil))
+        #! END PROBLEM 6
     elif val not in DELIMITERS: #! not in 注意看
         return val
     else:
