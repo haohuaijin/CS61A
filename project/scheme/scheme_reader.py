@@ -139,7 +139,7 @@ def scheme_read(src):
         #! END PROBLEM 1
     elif val == "'":
         #! BEGIN PROBLEM 6
-        return Pair("quote", Pair(scheme_read(src), nil))
+        return Pair("quote", Pair(scheme_read(src), nil)) #! scheme_read前面加pair，因为后面的是一个整体
         #! END PROBLEM 6
     elif val not in DELIMITERS: #! not in 注意看
         return val

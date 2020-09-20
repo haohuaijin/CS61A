@@ -57,7 +57,7 @@ def scheme_apply(procedure, args, env):
     if isinstance(procedure, BuiltinProcedure):
         return procedure.apply(args, env)
     else:
-        new_env = procedure.make_call_frame(args, env)
+        new_env = procedure.make_call_frame(args, env) #! 很好的处理了函数
         return eval_all(procedure.body, new_env)
 
 def eval_all(expressions, env):
@@ -75,9 +75,16 @@ def eval_all(expressions, env):
     >>> eval_all(read_line("((define x 2) x)"), create_global_frame())
     2
     """
-    # BEGIN PROBLEM 7
-    return scheme_eval(expressions.first, env) # change this line
-    # END PROBLEM 7
+    #! BEGIN PROBLEM 7
+    use_expr = expressions
+    if not use_expr:
+        return None
+    while use_expr.rest:
+        scheme_eval(use_expr.first, env)
+        use_expr = use_expr.rest
+    return scheme_eval(use_expr.first, env)
+    #return scheme_eval(expressions.first, env) # change this line
+    #! END PROBLEM 7
 
 ################
 # Environments #
@@ -99,19 +106,19 @@ class Frame(object):
 
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
-        # BEGIN PROBLEM 2
+        #! BEGIN PROBLEM 2
         self.bindings[symbol] = value
-        # END PROBLEM 2
+        #! END PROBLEM 2
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
-        # BEGIN PROBLEM 2
+        #! BEGIN PROBLEM 2
         parent = self
         while parent:
             if symbol in parent.bindings:
                 return parent.bindings[symbol]
             parent = parent.parent
-        # END PROBLEM 2
+        #! END PROBLEM 2
         raise SchemeError('unknown identifier: {0}'.format(symbol))
 
 
@@ -128,9 +135,13 @@ class Frame(object):
         """
         if len(formals) != len(vals):
             raise SchemeError('Incorrect number of arguments to function call')
-        # BEGIN PROBLEM 10
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 10
+        #! BEGIN PROBLEM 10
+        child_frame = Frame(self)
+        while formals:
+            child_frame.bindings[formals.first] = vals.first
+            formals, vals = formals.rest, vals.rest
+        return child_frame
+        #! END PROBLEM 10
 
 ##############
 # Procedures #
@@ -195,9 +206,10 @@ class LambdaProcedure(Procedure):
     def make_call_frame(self, args, env):
         """Make a frame that binds my formal parameters to ARGS, a Scheme list
         of values, for a lexically-scoped call evaluated in environment ENV."""
-        # BEGIN PROBLEM 11
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 11
+        #! BEGIN PROBLEM 11
+        new_frame = self.env.make_child_frame(self.formals, args)
+        return new_frame
+        #! END PROBLEM 11
 
     def __str__(self):
         return str(Pair('lambda', Pair(self.formals, self.body)))
@@ -260,9 +272,14 @@ def do_define_form(expressions, env):
         return target
         #! END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
-        # BEGIN PROBLEM 9
-        "*** YOUR CODE HERE ***"
-        # END PROBLEM 9
+        #! BEGIN PROBLEM 9
+        name = target.first     # f
+        formals = target.rest   # (x y)
+        body = expressions.rest # ((+ x y))
+        func = do_lambda_form(Pair(formals, body), env)
+        env.define(name, func)
+        return name
+        #! END PROBLEM 9 (define (f x y) (+ x sy))
     else:
         bad_target = target.first if isinstance(target, Pair) else target
         raise SchemeError('non-symbol: {0}'.format(bad_target))
@@ -301,9 +318,10 @@ def do_lambda_form(expressions, env):
     validate_form(expressions, 2)
     formals = expressions.first
     validate_formals(formals)
-    # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 8
+    #! BEGIN PROBLEM 8
+    body = expressions.rest
+    return LambdaProcedure(formals, body, env)
+    #! END PROBLEM 8
 
 def do_if_form(expressions, env):
     """Evaluate an if form.
