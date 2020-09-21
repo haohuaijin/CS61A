@@ -351,9 +351,17 @@ def do_and_form(expressions, env):
     4
     False
     """
-    # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 12
+    #! BEGIN PROBLEM 12
+    if len(expressions) == 0:
+        return True
+    use_expr = expressions
+    while use_expr.rest != nil:
+        ret = scheme_eval(use_expr.first, env)
+        if is_false_primitive(ret):
+            return ret
+        use_expr = use_expr.rest
+    return scheme_eval(use_expr.first, env)
+    #! END PROBLEM 12
 
 def do_or_form(expressions, env):
     """Evaluate a (short-circuited) or form.
@@ -368,9 +376,17 @@ def do_or_form(expressions, env):
     2
     6
     """
-    # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 12
+    #! BEGIN PROBLEM 12
+    if len(expressions) == 0:
+        return False
+    use_expr = expressions
+    while use_expr.rest != nil:
+        ret = scheme_eval(use_expr.first, env)
+        if is_true_primitive(ret):
+            return ret
+        use_expr = use_expr.rest
+    return scheme_eval(use_expr.first, env)
+    #! END PROBLEM 12
 
 def do_cond_form(expressions, env):
     """Evaluate a cond form.
@@ -388,9 +404,11 @@ def do_cond_form(expressions, env):
         else:
             test = scheme_eval(clause.first, env)
         if is_true_primitive(test):
-            # BEGIN PROBLEM 13
-            "*** YOUR CODE HERE ***"
-            # END PROBLEM 13
+            #! BEGIN PROBLEM 13
+            if len(clause.rest) == 0:
+                return test
+            return eval_all(clause.rest, env)
+            #! END PROBLEM 13
         expressions = expressions.rest
 
 def do_let_form(expressions, env):
@@ -412,9 +430,15 @@ def make_let_frame(bindings, env):
     if not scheme_listp(bindings):
         raise SchemeError('bad bindings list in let form')
     names, values = nil, nil
-    # BEGIN PROBLEM 14
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 14
+    #! BEGIN PROBLEM 14
+    while bindings is not nil:
+        bind = bindings.first
+        validate_form(bind, 2, 2)
+        names = Pair(bind.first, names)
+        values = Pair(scheme_eval(bind.rest.first, env), values)
+        bindings = bindings.rest
+    validate_formals(names)
+    #! END PROBLEM 14
     return env.make_child_frame(names, values)
     
 
@@ -427,9 +451,9 @@ def do_define_macro(expressions, env):
     >>> scheme_eval(read_line("(f (1 2))"), env)
     1
     """
-    # BEGIN Problem 20
+    #! BEGIN Problem 20
     "*** YOUR CODE HERE ***"
-    # END Problem 20
+    #! END Problem 20
 
 
 def do_quasiquote_form(expressions, env):
