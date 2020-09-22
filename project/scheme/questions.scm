@@ -54,15 +54,32 @@
 
 (define (nondecreaselist s)
 ; BEGIN PROBLEM 17
-  (define (helper li)
-    (cond 
-      ((equal? (cdr li) nil) (car li))
-      ((> (car li) (cadr li)) (car li)) 
-      (else (cons (car li) (helper (cdr li))))
+  (define (helper li) ;返回的是一个list(a b c)
+    (cond ;这里没有检测nil
+      ((equal? (car li) nil) nil)
+      ((equal? (cdr li) nil) (cons (car li) nil))
+      (else
+        (cond 
+          ((> (car li) (cadr li)) (cons (car li) nil))
+          (else (cons (car li) (helper (cdr li)) ))
+        )
+      )
     )
   )
-
-
+  (define (remove li len)
+    (cond 
+      ((equal? len 0) li)
+      (else (remove (cdr li) (- len 1)))
+    )
+  )
+  (cond
+    ((equal? s nil) nil)
+    (else 
+      (define temp (helper s))
+      (define len (length temp))
+      (cons temp (nondecreaselist (remove s len)))
+    )
+  )
 )
 ; END PROBLEM 17
 
