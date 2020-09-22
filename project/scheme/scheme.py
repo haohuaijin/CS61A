@@ -562,9 +562,12 @@ class MuProcedure(Procedure):
         self.formals = formals
         self.body = body
 
-    # BEGIN PROBLEM 18
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 18
+    #! BEGIN PROBLEM 18 
+    #* 注意和lambda的区别
+    def make_call_frame(self, args, env):
+        new_frame = env.make_child_frame(self.formals, args)
+        return new_frame
+    #! END PROBLEM 18
 
     def __str__(self):
         return str(Pair('mu', Pair(self.formals, self.body)))
@@ -578,9 +581,10 @@ def do_mu_form(expressions, env):
     validate_form(expressions, 2)
     formals = expressions.first
     validate_formals(formals)
-    # BEGIN PROBLEM 18
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 18
+    #! BEGIN PROBLEM 18
+    body = expressions.rest
+    return MuProcedure(formals, body)
+    #! END PROBLEM 18
 
 SPECIAL_FORMS['mu'] = do_mu_form
 
@@ -650,9 +654,9 @@ def optimize_tail_calls(original_scheme_eval):
             return Thunk(expr, env)
 
         result = Thunk(expr, env)
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+        #! BEGIN
+        
+        #! END
     return optimized_eval
 
 
@@ -663,7 +667,7 @@ def optimize_tail_calls(original_scheme_eval):
 ################################################################
 # Uncomment the following line to apply tail call optimization #
 ################################################################
-# scheme_eval = optimize_tail_calls(scheme_eval)
+scheme_eval = optimize_tail_calls(scheme_eval)
 
 
 
