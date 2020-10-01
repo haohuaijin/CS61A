@@ -44,7 +44,8 @@ test = {
       'ordered': False,
       'scored': True,
       'setup': r"""
-      sqlite> .read lab11
+      sqlite> .read lab11.sql 
+      # 上面的源文件漏掉了.sql后缀
       """,
       'teardown': '',
       'type': 'sqlite'

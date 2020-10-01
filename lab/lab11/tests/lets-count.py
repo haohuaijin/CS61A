@@ -33,7 +33,7 @@ test = {
       'ordered': False,
       'scored': True,
       'setup': r"""
-      sqlite> .read lab11
+      sqlite> .read lab11.sql
       """,
       'teardown': '',
       'type': 'sqlite'
