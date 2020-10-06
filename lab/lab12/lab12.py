@@ -16,7 +16,15 @@ def prune_min(t):
     >>> t3
     Tree(6, [Tree(3, [Tree(1)])])
     """
-    "*** YOUR CODE HERE ***"
+    if len(t.branches) == 1:
+        prune_min(t.branches[0])
+    elif len(t.branches) > 1:
+        min_label, branche = t.branches[0].label, t.branches[0]
+        for bran in t.branches:
+            if bran.label < min_label:
+                branche, min_label = bran, bran.label
+        t.branches = [branche]
+        prune_min(t.branches[0])
 
 def remainders_generator(m):
     """
@@ -49,7 +57,15 @@ def remainders_generator(m):
     7
     11
     """
-    "*** YOUR CODE HERE ***"
+    for i in range(m):
+        def inner():
+             natural = naturals()
+             next_nat = next(natural)
+             while True:
+                if next_nat % m == i:
+                    yield next_nat
+                next_nat = next(natural)
+        yield inner()
 
 def foldr(link, fn, z):
     """ Right fold
@@ -61,7 +77,9 @@ def foldr(link, fn, z):
     >>> foldr(lst, mul, 1) # (3 * (2 * (1 * 1)))
     6
     """
-    "*** YOUR CODE HERE ***"
+    if link == Link.empty:
+        return z
+    return fn(link.first, foldr(link.rest, fn, z))
 
 def mapl(lst, fn):
     """ Maps FN on LST
@@ -69,7 +87,9 @@ def mapl(lst, fn):
     >>> mapl(lst, lambda x: x*x)
     Link(9, Link(4, Link(1)))
     """
-    "*** YOUR CODE HERE ***"
+    if lst == Link.empty:
+        return Link.empty
+    return Link(fn(lst.first), mapl(lst.rest, fn))
 
 # Account
 class Account(object):
