@@ -5,7 +5,7 @@
     (cond 
       ((equal? funcs nil) number)
       (else 
-        ((compose-all (cdr funcs))((car funcs) number))
+        ((compose-all (cdr funcs)) ((car funcs) number))
       )
     )
   )

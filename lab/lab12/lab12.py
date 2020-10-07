@@ -155,10 +155,19 @@ class CheckingAccount(Account):
     def withdraw(self, amount):
         return Account.withdraw(self, amount + self.withdraw_fee)
 
-    "*** YOUR CODE HERE ***"
+    def deposit_check(self, check):
+        if self.holder == check.payable_to and not check.deposited:
+            check.deposited = True
+            return check.total
+        else:
+            print("The police have been notified.")
+
 
 class Check(object):
-    "*** YOUR CODE HERE ***"
+    def __init__(self, name, money):
+        self.payable_to = name
+        self.deposited = False
+        self.total = money
 
 
 def foldl(link, fn, z):
@@ -173,8 +182,7 @@ def foldl(link, fn, z):
     """
     if link is Link.empty:
         return z
-    "*** YOUR CODE HERE ***"
-    return foldl(______, ______, ______)
+    return foldl(link.rest, fn, fn(z, link.first))
 
 def filterl(lst, pred):
     """ Filters LST based on PRED
@@ -182,7 +190,32 @@ def filterl(lst, pred):
     >>> filterl(lst, lambda x: x % 2 == 0)
     Link(4, Link(2))
     """
-    "*** YOUR CODE HERE ***"
+    #! use the foldl don't work
+    def helper(fir, sec):
+        if pred(sec):
+            return Link(fir, sec)
+        else:
+            return fir
+    return foldl(lst, helper, Link.empty)
+    """
+    # use the foldr 
+    def helper(fir, sec):
+        if pred(fir):
+            return Link(fir, sec)
+        else:
+            return sec
+    return foldr(lst, helper, Link.empty) 
+    """
+    """
+    # not use the foldr
+    if lst == Link.empty:
+        return lst
+    if pred(lst.first):
+        return Link(lst.first, filterl(lst.rest, pred))
+    else:
+        return filterl(lst.rest, pred)
+    """
+
 
 def reverse(lst):
     """ Reverses LST with foldl
@@ -194,7 +227,20 @@ def reverse(lst):
     >>> reversed is Link.empty
     True
     """
-    "*** YOUR CODE HERE ***"
+    # not use foldl
+    if lst.rest == Link.emtpy:
+        return lst
+    else:
+        " reverse the list. "
+
+
+    """
+    # use the foldl
+    def helper(fir, sec):
+        return Link(sec, fir)
+    return foldl(lst, helper, Link.empty)
+    """
+
 
 identity = lambda x: x
 
@@ -208,8 +254,12 @@ def foldl2(link, fn, z):
     >>> foldl2(list, mul, 1) # (((1 * 3) * 2) * 1)
     6
     """
+    #! don't work
     def step(x, g):
-        "*** YOUR CODE HERE ***"
+        if x == identity:
+            return x
+        else:
+            return fn(g, x)
     return foldr(link, step, identity)(z)
 
 def num_splits(s, d):
